@@ -1,5 +1,6 @@
 SampleApp::Application.routes.draw do
-  get "users/new"
+  # get "users/new" -- Don't need this anymore with RESTful architecture and "resources :users""
+	resources :users
 
   root :to => 'static_pages#home'
 	match '/help', :to => 'static_pages#help'
