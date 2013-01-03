@@ -5,6 +5,10 @@ describe "User" do
 	
 	describe "index" do
 		let(:user) { FactoryGirl.create(:user) }
+		
+		before(:all)  { 30.times { FactoryGirl.create(:user) } }
+		after(:all)   { User.delete_all }
+		
 		before(:each) do
 			sign_in user
 			visit users_path
@@ -14,11 +18,10 @@ describe "User" do
 		it { should have_selector('h1', text: 'All users') }
 		
 		describe "pagination" do
-			
 			it { should have_selector('div.pagination') }
 			
 			it "should list each user" do
-				User.paginate(page: 1) do |user|
+				User.paginate(page: 1).each do |user|
 					page.should have_selector('li', text: user.name)
 				end
 			end
@@ -42,7 +45,7 @@ describe "User" do
 		end
 	end
 
-	describe "signup page" do
+	describe "signup" do
 		before { visit signup_path }
 		let(:submit) { "Create my account" }
 
@@ -65,12 +68,16 @@ describe "User" do
 			end
 			
 			describe "after saving the user" do
-				it { should have_link('Sign out') }
+				before { click_button submit }
+				let(:user) { User.find_by_email('user@example.com') }
+				
+				it { should have_selector('title', text: user.name) }
+				it { should have_selector('div.alert.alert-success'), text: 'Welcome' }
 			end
 		end
 		
 		it { should have_selector('h1', :text => 'Sign up') }
-		it { should have_selector('title', :text => full_title('Sign up'))}
+		it { should have_selector('title', :text => full_title('Sign up')) }
 	end
 	
 	describe "profile page" do
