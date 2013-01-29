@@ -2,6 +2,7 @@ SampleApp::Application.routes.draw do
   # get "users/new" -- Don't need this anymore with RESTful architecture because of "resources :users""
 	resources :users
 	resources :sessions, only: [:new, :create, :destroy]
+  resources :microposts, only: [:create, :destroy]
 
   root :to => 'static_pages#home'
 	match '/help', to: 'static_pages#help'
